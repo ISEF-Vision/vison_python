@@ -13,15 +13,14 @@ while(cap.isOpened()):
     #1. Frame Resizing
     frame = pre.resize(frame_origin,0.4)
     #2. Get HoughLines
-    houghlines = pre.getHoughLines(frame)
-    houghplines = pre.getHoughPLines(frame)
+    houghlines = pre.getHoughLines(frame,80)
 
 
     #Apply Algorithm on this part
 
 
     #Draw lines
-    for line in houghplines:
+    for line in houghlines:
         cv2.line(frame,line.pt1,line.pt2,(0,0,255),2)
 
     cv2.imshow('frame',frame)

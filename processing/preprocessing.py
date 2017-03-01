@@ -40,7 +40,7 @@ def getHoughLines(frame,houghline_threshold=150):
             y1 = int(y0 + 1000 * (a))
             x2 = int(x0 - 1000 * (-b))
             y2 = int(y0 - 1000 * (a))
-            line = Line.Line(x1,y1,x2,y2)
+            line = Line.DegreeLine(x1,y1,x2,y2,theta)
             lines.append(line)
 
     return lines
