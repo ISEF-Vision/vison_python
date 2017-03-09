@@ -1,67 +1,115 @@
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    > File Name: FitLine.py
-    > Project Name: LineFittingModule_py
-    > Author: Dongmin Kim
-    > Purpose: Fitting given Lines
-    > Created Time: 2017/02/27
-    > Copyright (c) 2017, Dongmin Kim
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-import copy
-from Line import *
+import math as Math
+import structure.Line
+
+# Define Value
+# <- please define some values for next calculation
+SLOPE_DIFF_MIN = 1.0
+N = 10
+
 
 class FitLine:
-    def __init__():
-        ## Do nothing
-    
-    def __init__(lines, direction):
-        m_lines = copy.deepcopy(lines)
-        ImgDirection = direction
 
-    def CompareLines():
-        MAX_VAL = -1
-        
-        preSet()
+    # -------------------------
+    # function __init__
+    # Params : lines(Result of houghlines), regression_result(result of regression from houghlines)
+    # Return : None
+    # This function aim to set param_beta value for calculating get_compare_lines
+    # Also we init some values in first paragraph
+    # -------------------------
 
-        for i in range(0, m_lines.size()):
-            for j in range(0, m_lines.size()):
-                if(i == j) : continue
-                lossMatrix[i][j] = getLossFunc(m_lines[i]),m_lines[j])
-                if(lossMatrix[i][j] > MAX_VAL):
-                    MAX_VAL = lossMatrix[i][j]
-                    resultLine.first = m_lines[i]
-                    resultLine.second = m_lines[j]
-        return resultLine
+    def __init__(self, lines, regression_result):
+        #  0. Init some class value
+        self.lines = lines
+        self.regression_result = regression_result
+        self.max_value = -1
+        self.lines_size = 0
+        self.square_lines_size = 0
+        self.param_beta = 0
+        self.result_first = None
+        self.result_second = None
 
-    def getLossFunc(x, y):
-        xSlope = x.getSlope(), ySlope = y.getSlope()
-        xSize = x.getSize(), ySize = y.getSize()
+        slope_sum = 0
+        length_sum = 0
+        numerator = 0
+        denominator = 0
 
-        if(abs(xSlope - ySlope) < SLOPE_DIFF_MIN):
+        # 1. Set some class values
+        # lines_size(Sum of lines Length)
+        # square_lines_size(Sum of square lines size)
+        for i in range(0, len(self.lines)):
+            self.lines_size += self.lines[i].size
+            self.square_lines_size += pow(self.lines[i].size, 2)
+
+        # 2. Set some local value
+        # length_sum (two lines which selected from i,j and square)
+        # slope_sum (discriminant result which selected from i,j)
+        for i in range(0, len(self.lines)):
+            for j in range(0, len(self.lines)):
+                length_sum += pow(self.lines[i].size + self.lines[j].size, 2)
+                slope_sum += self.discriminant(self.lines[i], self.lines[j])
+
+        length_sum -= self.square_lines_size * pow(len(self.lines), 2)
+
+        #  3. Set some local value
+        #  numerator (some algorithm)
+        #  denominator (???) <- We need some explanation for this code
+
+        for i in range(0, len(self.lines)):
+            for j in range(0, len(self.lines)):
+                numerator += (slope_sum - self.discriminant(self.lines[i], self.lines[j]) * pow(N, 2)) * \
+                             (pow(N, 2) * pow(self.lines[i].size + self.lines[i].size, 2) - length_sum)
+                denominator += pow(pow(N, 2) * pow(self.lines[i].size + self.lines[i].size, 2) - length_sum, 2)
+
+        # 4. Set params beta
+        self.param_beta = numerator / denominator
+
+    # -------------------------
+    # function get_compare_lines
+    # Params : None
+    # Return : Tuple type (first_line, second_line)
+    # This function aim to get two major lines from lines
+    # -------------------------
+
+    def get_compare_lines(self):
+        result_first = None
+        result_second = None
+
+        for i in range(0, len(self.lines)):
+            for j in range(0, len(self.lines)):
+                if i == j:
+                    pass
+
+                loss_result = self.loss_function(self.lines[i],self.lines[j])
+
+                if loss_result > self.max_value:
+                    self.max_value = loss_result
+                    result_first = self.lines[i]
+                    result_second = self.lines[j]
+
+        return (result_first,result_second)
+
+    # -------------------------
+    # function loss_function (Inner processing function : Use only in class)
+    # Params : x(first line), y(second line)
+    # Return : result of loss_function
+    # -------------------------
+
+    def loss_function(self, x, y):
+        x_slope = x.slope
+        y_slope = y.slope
+        x_size = x.size
+        y_size = y.size
+
+        if abs(x_slope - y_slope) < SLOPE_DIFF_MIN:
             return -1
-        return param_beta * (pow(xSize + ySize,2) - SquareLineSize) - getDiscriminant(x, y)
 
-    def getDiscriminant(x, y):
-        return -1 * abs(tan((x.slope + y.slope) / 2 - ImgDirection)
+        return self.param_beta * (pow(x_size + y_size,2) - self.square_lines_size) - self.discriminant(x, y)
 
-    def preSet():
-        Length_sum = 0, Slope_sum = 0
-        numertor = 0, denominator = 0
+    # -------------------------
+    # function discriminant (Inner processing function : Use only in class)
+    # Params : x(first line), y(second line)
+    # Return : result of discriminant function
+    # -------------------------
 
-        for i in range(0, m_lines.size()):
-            LineSize += m_lines[i].getSize()
-            SquareLineSize += pow(m_lines[i].getSize(), 2)
-        
-        for i in range(0, m_lines.size()):
-            for j in range(0, m_lines.size()):
-                Length_sum += pow(m_lines[i].getSize() + m_lines[j].getSize(), 2)
-                Slope_sum += getDiscriminant(m_lines[i], m_lines[j])
-
-        Length_sum -= SquareLineSize * pow(m_lines.size(), 2)
-
-        for i in range(0, m_lines.size()):
-            for j in range(0, m_lines.size()):
-                numerator += (Slope_sum - getDiscriminant(m_Lines[i], m_Lines[j]) * pow(N, 2)) * 
-					(pow(N,2) * pow(m_lines[i].getSize() + m_lines[i].getSize(), 2) - Length_sum)
-				denominator += pow(pow(N, 2) * pow(m_lines[i].getSize() + m_lines[i].getSize(), 2) - Length_sum, 2)
-
-        param_beta = numerator / denominator
+    def discriminant(self, x, y):
+        return -1 * abs(Math.tan((x.slope + y.slope) / 2 - self.regression_result))

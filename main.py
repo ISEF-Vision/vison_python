@@ -1,5 +1,7 @@
 import cv2
 import processing.preprocessing as pre
+import processing.regression_process as reg
+import numpy as np
 
 file_url = "../test_videos/walking.mp4"
 
@@ -10,19 +12,24 @@ while(cap.isOpened()):
     if frame_origin ==None:
         break
 
-    #1. Frame Resizing
+    # 1. Frame Resizing
     frame = pre.resize(frame_origin,0.4)
-    #2. Get HoughLines
-    houghlines = pre.getHoughLines(frame)
-    houghplines = pre.getHoughPLines(frame)
 
+    # 2-1. Get Hough Lines
+    # def getHoughLines(frame, minLineLength = 100, maxLineGap = 10)
+    hough_lines = pre.get_hough_lines(frame,200)
 
-    #Apply Algorithm on this part
+    # 2-2 Get HoughP Lines
+    # def getHoughPLines(frame, minLineLength=100, maxLineGap=10):
+    houghp_lines = pre.get_hough_p_lines(frame)
 
+    # Apply Algorithm on this part
 
-    #Draw lines
-    for line in houghplines:
-        cv2.line(frame,line.pt1,line.pt2,(0,0,255),2)
+    # Draw lines for HoughLine
+    for line in hough_lines:
+        cv2.line(frame,line.pt1,line.pt2,line.color_dict[line.line_type],2)
+
+    reg.regression_process(frame_origin,houghp_lines)
 
     cv2.imshow('frame',frame)
     cv2.waitKey(1)
