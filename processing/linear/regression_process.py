@@ -1,8 +1,7 @@
 import numpy as np
 import cv2
 
-
-def regression_process(frame_origin, houghlines, ):
+def regression_process(frame_origin, houghlines):
 
     height, width = frame_origin.shape[:2]
     regression_background = np.zeros((int(height * 0.4), int(width * 0.4), 1), np.uint8)
@@ -26,6 +25,6 @@ def regression_process(frame_origin, houghlines, ):
 
     cv2.line(regression_result, (cols - 1, righty), (0, lefty), 255, 2)
     cv2.imshow("regression_result",regression_result)
-
-
     cv2.waitKey(1)
+
+    return regression_result
