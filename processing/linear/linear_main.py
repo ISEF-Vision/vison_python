@@ -3,7 +3,7 @@ import cv2
 import processing.linear.regression_process as reg
 import processing.preprocessing as pre
 
-file_url = "../test_videos/walking.mp4"
+file_url = "../../test_videos/walking.mp4"
 
 cap = cv2.VideoCapture(file_url)
 
@@ -12,7 +12,7 @@ while(cap.isOpened()):
     if frame_origin ==None:
         break
 
-    # 1. Frame Resizing
+    # 1. 프레임 크기 조정
     frame = pre.resize(frame_origin,0.4)
 
     # 2-1. Get Hough Lines
