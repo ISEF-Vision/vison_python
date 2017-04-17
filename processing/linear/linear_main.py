@@ -11,7 +11,7 @@ while(cap.isOpened()):
     ret,frame_origin = cap.read()
     if frame_origin ==None:
         break
-
+    # test
     frame = pre.resize(frame_origin,0.4)
 
     # 2-1. Get Hough Lines
