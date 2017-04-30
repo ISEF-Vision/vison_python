@@ -1,5 +1,5 @@
 import math as Math
-import structure.Line
+import structure.line
 
 # Define Value
 # <- please define some values for next calculation

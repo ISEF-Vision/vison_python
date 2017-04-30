@@ -12,7 +12,7 @@ while(cap.isOpened()):
     if frame_origin ==None:
         break
 
-    # 1. 프레임 크기 조정
+    # 1. Resizing
     frame = pre.resize(frame_origin,0.4)
 
     # 2-1. Get Hough Lines

@@ -91,3 +91,16 @@ ENV/
 
 .vs/
 
+*.mp4
+*.avi
+*.MP4
+*.AVI
+*.mkv
+*.m4v
+
+.idea
+processing/pattern/chart/
+test_videos
+
+
+test_videos/walking.mp4
