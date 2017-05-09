@@ -1,3 +1,5 @@
+import numpy as np
+
 # Define Value
 DIVIDOR = 1e5
 
@@ -14,11 +16,13 @@ class Line:
         self.pt1 = (x1, y1)
         self.pt2 = (x2, y2)
 
-        self.size = (pow(x1 - x2, 2) + pow(y1 - y2, 2)) / DIVIDOR
+        self.size = np.sqrt((pow(x1 - x2, 2) + pow(y1 - y2, 2)))
         if x1 == x2:
             self.slope = DIVIDOR
         else:
-            self.slope = (y1 - y2) / (x1 - x2) * 180.0 / 3.14
+            self.slope = np.arctan(float(y1-y2)/float(x1-x2)) * 180 / 3.14
+        if self.slope < 0:
+            self.slope = self.slope + 180
 
 
 class DegreeLine:

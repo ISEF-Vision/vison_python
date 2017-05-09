@@ -87,7 +87,7 @@ ENV/
 
 # Rope project settings
 .ropeproject
-.idea/
+.idea
 
 .vs/
 
@@ -98,9 +98,5 @@ ENV/
 *.mkv
 *.m4v
 
-.idea
-processing/pattern/chart/
+core/pattern/chart/
 test_videos
-
-
-test_videos/walking.mp4

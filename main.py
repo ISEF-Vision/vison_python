@@ -1,36 +1,25 @@
 import cv2
 
-import processing.linear.regression_process as reg
-import processing.preprocessing as pre
+from core.linear.recognizor import LinearRecognizor
+from core.pattern.recognizor import PatternRecognizor
+import core.preprocessing as pre
 
-file_url = "../test_videos/walking.mp4"
+name = "walking"
+file_url = "./test_videos/" + name + ".mp4"
 
 cap = cv2.VideoCapture(file_url)
+linear_recog = LinearRecognizor()
+pattern_recog = PatternRecognizor()
 
-while(cap.isOpened()):
-    ret,frame_origin = cap.read()
-    if frame_origin ==None:
+
+while cap.isOpened():
+    ret, frame = cap.read()
+    if frame is None:
         break
 
-    # 1. Frame Resizing
-    frame = pre.resize(frame_origin,0.4)
-
-    # 2-1. Get Hough Lines
-    # def getHoughLines(frame, minLineLength = 100, maxLineGap = 10)
-    hough_lines = pre.get_hough_lines(frame,200)
-
-    # 2-2 Get HoughP Lines
-    # def getHoughPLines(frame, minLineLength=100, maxLineGap=10):
-    houghp_lines = pre.get_hough_p_lines(frame)
-
-    # Apply Algorithm on this part
-
-    # Draw lines for HoughLine
-    for line in hough_lines:
-        cv2.line(frame,line.pt1,line.pt2,line.color_dict[line.line_type],2)
-
-    reg.regression_process(frame_origin,houghp_lines)
-
-    cv2.imshow('frame',frame)
+    frame = pre.resize(frame,0.4)
+    linear_recog.update(frame)
+    pattern_recog.update(frame)
     cv2.waitKey(1)
+
 cv2.waitKey(0)
