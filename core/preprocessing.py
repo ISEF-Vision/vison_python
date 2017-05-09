@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import structure.Line as Line
+from structure.line import DegreeLine,Line
 
 # Define values
 houghline_threshold = 150
@@ -35,7 +35,7 @@ def get_hough_p_lines(frame,minLineLength=100,maxLineGap=10):
     lines = []
     for line_data in lines_data:
         x1, y1, x2, y2 = line_data[0]
-        line = Line.Line(x1,y1,x2,y2)
+        line = Line(x1,y1,x2,y2)
         lines.append(line)
     return lines
 
@@ -57,7 +57,7 @@ def get_hough_lines(frame,canny_threshold=100,max_line_size=50,min_line_size=40)
 
     lines_data = cv2.HoughLines(canny, 1, np.pi / 180, houghline_threshold)
     lines =[]
-    if lines == None:
+    if lines_data is None:
         pass
     else:
         for data in lines_data:
@@ -70,15 +70,15 @@ def get_hough_lines(frame,canny_threshold=100,max_line_size=50,min_line_size=40)
             y1 = int(y0 + 1000 * (a))
             x2 = int(x0 - 1000 * (-b))
             y2 = int(y0 - 1000 * (a))
-            line = Line.DegreeLine(x1,y1,x2,y2,theta)
+            line = DegreeLine(x1,y1,x2,y2,theta)
             lines.append(line)
 
     # print "line size " + str(len(lines))
 
     if (len(lines) < min_line_size):
-        houghline_threshold -= 10
+        if not houghline_threshold-10 < 0:
+            houghline_threshold -= 10
     if (len(lines) > max_line_size):
         houghline_threshold += 5
-    print "size:" + str(len(lines)) + " threshold:" + str(houghline_threshold)
 
     return lines

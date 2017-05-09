@@ -87,7 +87,16 @@ ENV/
 
 # Rope project settings
 .ropeproject
-.idea/
+.idea
 
 .vs/
 
+*.mp4
+*.avi
+*.MP4
+*.AVI
+*.mkv
+*.m4v
+
+core/pattern/chart/
+test_videos
