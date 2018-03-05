@@ -1,6 +1,6 @@
 import cv2
 
-from recognizor import PatternRecognizor
+from recognizer import PatternRecognizer
 from plot import Plot
 import core.preprocessing as pre
 
@@ -9,8 +9,8 @@ file_url = "../../test_videos/" + name + ".mp4"
 
 cap = cv2.VideoCapture(file_url)
 
-pattern_recognizor = PatternRecognizor()
-plot = Plot(pattern_recognizor)
+pattern_recognizer = PatternRecognizer()
+plot = Plot(pattern_recognizer)
 
 while cap.isOpened():
     ret, frame_origin = cap.read()
@@ -18,7 +18,7 @@ while cap.isOpened():
         break
 
     frame = pre.resize(frame_origin, 0.4)
-    pattern_recognizor.update(frame)
+    pattern_recognizer.update(frame)
 
     cv2.imshow('frame', frame)
 

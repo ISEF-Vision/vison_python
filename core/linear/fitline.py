@@ -7,29 +7,32 @@ N = 10
 
 
 def compare_slope(i, j):
-    return Math.fabs(i.slope- 90) < 5 or Math.fabs(j.slope - 90) < 5.0 or i.slope * j.slope == 0
+    return Math.fabs(i.slope - 90) < 5 or Math.fabs(j.slope - 90) < 5.0 or i.slope * j.slope == 0
 
 
 class FitLine:
 
     # -------------------------
     # function __init__
-    # Params : lines(Result of houghlines), regression_result(result of regression from houghlines)
+    # Params : lines(Result of probabilistic hough lines)
+    #          regression_result(result of regression from probabilistic hough line)
     # Return : None
     # This function aim to set param_beta value for calculating get_compare_lines
     # Also we init some values in first paragraph
+    # More information of equations were posted on paper
     # -------------------------
 
     def __init__(self, lines, regression_result):
         #  0. Init some class value
         self.lines = lines
         self.regression_result = regression_result
-        self.max_value = -9999999
+        self.max_value = int('-inf')
         self.lines_size = 0
         self.square_lines_size = 0
         self.param_beta = 0
         self.result_first = None
         self.result_second = None
+        self.discriminant_feature = 15
 
         slope_sum = 0
         length_sum = 0
@@ -41,15 +44,15 @@ class FitLine:
         # square_lines_size(Sum of square lines size)
         for i in range(0, len(self.lines)):
             self.lines_size += self.lines[i].size
-            self.square_lines_size += pow(self.lines[i].size, 2)
+            self.square_lines_size += self.lines[i].size * self.lines[i].size
 
         # 2. Set some local value
         # length_sum (two lines which selected from i,j and square)
         # slope_sum (discriminant result which selected from i,j)
-        for i in range(0, len(self.lines)):
-            for j in range(0, len(self.lines)):
-                length_sum += pow(self.lines[i].size + self.lines[j].size, 2)
-                slope_sum += self.discriminant(self.lines[i], self.lines[j])
+        for firstLine in self.lines:
+            for secondLine in self.lines:
+                length_sum += (firstLine.size + secondLine.size) * (firstLine.size_+ secondLine.size)
+                slope_sum += self.discriminant(firstLine, secondLine)
 
         length_sum -= self.square_lines_size
 
@@ -97,6 +100,7 @@ class FitLine:
     # function loss_function (Inner core function : Use only in class)
     # Params : x(first line), y(second line)
     # Return : result of loss_function
+    # If two lines' slopes are too close, return -1
     # -------------------------
 
     def loss_function(self, x, y):
@@ -117,8 +121,6 @@ class FitLine:
     # -------------------------
 
     def discriminant(self, x, y):
-        if x.slope == 100000 or y.slope == 100000:
-            return -1e5
-        if abs(x.slope - y.slope) < 15:
-            return -1e5
+        if abs(x.slope - y.slope) < self.discriminant_feature:
+            return int('-inf')
         return -1 * abs((x.slope + y.slope)/2 - self.regression_result)

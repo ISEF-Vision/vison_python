@@ -4,7 +4,7 @@ from plot import Plot
 import cv2
 
 
-class PatternRecognizor:
+class PatternRecognizer:
     def __init__(self, plot=True):
         self.index = 2
         self.lines = {
@@ -60,7 +60,6 @@ class PatternRecognizor:
         self.draw_hough(frame, hough_lines)
         if self.isplot:
             self.plot.update()
-
 
     def draw_hough(self, frame, hough_lines):
         for line in hough_lines:

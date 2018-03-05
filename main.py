@@ -1,14 +1,14 @@
 import cv2
 
-from core.linear.recognizor import LinearRecognizor
-from core.pattern.recognizor import PatternRecognizor
+from core.linear.recognizer import LinearRecognizer
+from core.pattern.recognizer import PatternRecognizor
 import core.preprocessing as pre
 
 name = "walking"
 file_url = "./test_videos/" + name + ".mp4"
 
 cap = cv2.VideoCapture(file_url)
-linear_recog = LinearRecognizor()
+linear_recog = LinearRecognizer()
 pattern_recog = PatternRecognizor()
 
 
